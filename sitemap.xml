@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>http://ben.tennant.family/tag/ansible/</loc>
+<lastmod>2018-02-18T23:34:27-06:00</lastmod>
+</url>
+<url>
+<loc>http://ben.tennant.family/tag/aws/</loc>
+<lastmod>2018-02-18T23:34:27-06:00</lastmod>
+</url>
+<url>
+<loc>http://ben.tennant.family/tag/devops/</loc>
+<lastmod>2018-02-18T23:34:27-06:00</lastmod>
+</url>
+<url>
+<loc>http://ben.tennant.family/posts/aws-provisioning-with-ansible-p1</loc>
+<lastmod>2018-02-18T00:00:00-06:00</lastmod>
+</url>
+<url>
+<loc>http://ben.tennant.family/about</loc>
+</url>
+<url>
+<loc>http://ben.tennant.family/</loc>
+</url>
+</urlset>

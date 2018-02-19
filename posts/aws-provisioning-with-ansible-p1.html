@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Ben, Coffeed. . . | Using Ansible to Provision AWS Resources - Part 1</title>
+  <meta name="description" content="Building EC2 instances with Ansible">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="Using Ansible to Provision AWS Resources - Part 1">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="http://ben.tennant.family/posts/aws-provisioning-with-ansible-p1">
+  <meta property="og:description" content="Building EC2 instances with Ansible">
+  <meta property="og:site_name" content="Ben, Coffeed. . .">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:url" content="http://ben.tennant.family/posts/aws-provisioning-with-ansible-p1">
+  <meta name="twitter:title" content="Using Ansible to Provision AWS Resources - Part 1">
+  <meta name="twitter:description" content="Building EC2 instances with Ansible">
+
+  
+    
+      <meta property="og:image" content="http://ben.tennant.family/assets/posts/aws-provisioning-with-ansible/Ansible_Amazon_B_W-cf7520597a3767973d5155ca01fa6117bb9cd6bab9046a78825f00f8cc3d8ce2.png">
+      <meta name="twitter:image" content="http://ben.tennant.family/assets/posts/aws-provisioning-with-ansible/Ansible_Amazon_B_W-cf7520597a3767973d5155ca01fa6117bb9cd6bab9046a78825f00f8cc3d8ce2.png">
+    
+  
+
+  <link href="http://ben.tennant.family/feed.xml" type="application/rss+xml" rel="alternate" title="Ben, Coffeed. . . Last 10 blog posts" />
+
+  
+
+  
+    <link rel="icon" type="image/x-icon" href="/assets/favicon-light-a7ab0a1d6ca0f0d8d955690450587f560de3724483665357a192abf1d0e03413.ico">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon-light-9b99bd4f10c21e2d4b9ea269795cda0dd1217a9b5e0e6d4886ae0801874bc2be.png">
+    <link rel="stylesheet" type="text/css" href="/assets/light-d58c19abf06dc3cc3a6c400051a5c3db48584a5b62501c488e46bb346b7acb73.css">
+  
+</head>
+
+<body>
+  <main>
+    <div class="grid grid-centered">
+      <div class="grid-cell">
+        <nav class="header-nav scrollappear">
+  <a href="/" class="header-logo" title="Ben, Coffeed. . .">Ben, Coffeed. . .</a>
+  <ul class="header-links">
+    
+    
+    
+    
+    
+      <li>
+        <a href="https://github.com/bencoffeed" rel="noreferrer noopener" target="_blank" title="GitHub">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-github">
+  <use href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github" xlink:href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+    
+    
+    
+    
+      <li>
+        <a href="https://www.linkedin.com/in/benjaminhtennant" rel="noreferrer noopener" target="_blank" title="LinkedIn">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-linkedin">
+  <use href="/assets/linkedin-cdc5c107044324a3dfbea2e9ead15873f8dee304c37d73a046988956b706256e.svg#icon-linkedin" xlink:href="/assets/linkedin-cdc5c107044324a3dfbea2e9ead15873f8dee304c37d73a046988956b706256e.svg#icon-linkedin"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      <li>
+        <a href="mailto:ben@tennant.family" title="Email">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-email">
+  <use href="/assets/email-782473193bf750036fdb90e8daa075508a20509d01854c09f3237c144a3f0601.svg#icon-email" xlink:href="/assets/email-782473193bf750036fdb90e8daa075508a20509d01854c09f3237c144a3f0601.svg#icon-email"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+      <li>
+        <a href="/feed.xml" rel="noreferrer noopener" target="_blank" title="RSS">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-rss">
+  <use href="/assets/rss-541ec5cea9cefd10d2fcfec01888f3f231a8829940249835fa7b7b3a12ae0d0d.svg#icon-rss" xlink:href="/assets/rss-541ec5cea9cefd10d2fcfec01888f3f231a8829940249835fa7b7b3a12ae0d0d.svg#icon-rss"></use>
+</svg>
+
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+        <article class="article scrollappear">
+          <header class="article-header">
+            <h1>Using Ansible to Provision AWS Resources - Part 1</h1>
+            <p>Building EC2 instances with Ansible</p>
+            <div class="article-list-footer">
+              <span class="article-list-date">
+                February 18, 2018
+              </span>
+              <span class="article-list-divider">-</span>
+              <span class="article-list-minutes">
+                
+                
+                  9 minute read
+                
+              </span>
+              <span class="article-list-divider">-</span>
+              <div class="article-list-tags">
+                
+                  <a href="/tag/DevOps">DevOps</a>
+                
+                  <a href="/tag/Ansible">Ansible</a>
+                
+                  <a href="/tag/AWS">AWS</a>
+                
+              </div>
+            </div>
+          </header>
+
+          <div class="article-content">
+            <p>NOTE: You can view the repo for this project on
+<a href="https://github.com/BenCoffeed/AnsibleAWS">GitHub</a></p>
+
+<p>When I took on my first DevOps job, I noticed that while the team had existing CM (Puppet), the process of actually provisioning new resources was extremely manual. I had to dig to find out what AMI’s, instance types, security groups, tags, tenancy, VPC structure, subnets, storage configuration, etc. were being used for existing instances. Once I figured all of these things out, I had to figure out what version of puppet was being used. I spent a solid month of just reviewing existing configs and trying to dig through what documentation was available to try and get an idea of how things were operating. I spent all of that time digging through only to realize that the CM we were using had been broken quite a while ago due to the use of a retired custom PHP PPA. Digging through the puppet config, it became quickly evident that the code hadn’t been touched in over 3 years. I decided that it would probably be best to simply rewrite the CM and since both the lead backend developer and myself were most familiar with Ansible, we chose to rewrite it using Ansible. I’ll post more on that later. . . However, since I was going to be upgrading all of our servers to a current version of Ubuntu as well, I decided to do a blue/green approach and just rebuild everything from scratch. To do this, though, I needed a reliable, repeatable way to build/tear down, and rebuild instances. A wiser man may have used something like HashiCorp’s Terraform. However, I didn’t see the point of bringing in ANOTHER new technology when I had all the tools to build my infrastructure using Ansible.</p>
+
+<h2 id="building-ec2-instances">Building EC2 Instances</h2>
+
+<p>One thing that I had felt the pain of at the onset of this assignment
+was the lack of a consistent inventory of my AWS resources. So, I
+decided pretty early on that there was a common list of things that I
+would like to know about each instance:</p>
+<ul>
+  <li>name</li>
+  <li>region</li>
+  <li>private ip address</li>
+  <li>instance type</li>
+  <li>default ssh key name</li>
+  <li>security groups</li>
+  <li>AMI id</li>
+  <li>Does it need a public IP?</li>
+  <li>tags</li>
+  <li>tenancy</li>
+  <li>CloudWatch monitoring</li>
+  <li>termination protection</li>
+  <li>vpc subnet id</li>
+  <li>storage configuration</li>
+  <li>ebs optimization</li>
+  <li>instance profile</li>
+  <li>groups in ansible inventory file</li>
+  <li>default ssh username</li>
+  <li>location of ssh private key</li>
+  <li>default to Ansible using root? (ansible_become)</li>
+  <li>host type (ec2, rds, etc. more on this later. . .)</li>
+  <li>CloudWatch Alarms</li>
+  <li>any pecial variables to add to ansible inventory file</li>
+</ul>
+
+<p>So, I built a simple yml dict that would carry this information for me.
+This would be the base of my solution to build new resources. The dict
+could hold one or more resources. If the server was a standalone that
+would only ever be built by itself, then it would just contain a single
+host. However, if it was a cluster of resources that would always need
+to be built and destroyed together, then all of the hosts could be
+defined in a single dict.</p>
+
+<p>Here’s a sample of <code class="highlighter-rouge">awx01.yml</code>, the inventory file for my Ansible AWX
+server.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">ec2_hosts</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">awx01</span>
+    <span class="na">region</span><span class="pi">:</span> <span class="s">us-west-2</span>
+    <span class="na">private_ip</span><span class="pi">:</span> <span class="s">172.17.2.48</span>
+    <span class="na">instance_type</span><span class="pi">:</span> <span class="s">t2.medium</span>
+    <span class="na">keypair</span><span class="pi">:</span> <span class="s">production</span>
+    <span class="na">groups</span><span class="pi">:</span> <span class="s">awx-servers</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">ami-79873901</span>
+    <span class="na">assign_public_ip</span><span class="pi">:</span> <span class="s">yes</span>
+    <span class="na">instance_tags</span><span class="pi">:</span>
+      <span class="na">Name</span><span class="pi">:</span> <span class="s">awx01</span>
+      <span class="na">server_env</span><span class="pi">:</span> <span class="s">utilities</span>
+    <span class="na">tenancy</span><span class="pi">:</span> <span class="s">default</span>
+    <span class="na">monitoring</span><span class="pi">:</span> <span class="s">yes</span>
+    <span class="na">termination_protection</span><span class="pi">:</span> <span class="s">yes</span>
+    <span class="na">vpc_subnet_id</span><span class="pi">:</span> <span class="s">subnet-ef8788fd</span>
+    <span class="na">wait</span><span class="pi">:</span> <span class="s">yes</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">device_name</span><span class="pi">:</span> <span class="s">/dev/sda1</span>
+        <span class="na">volume_size</span><span class="pi">:</span> <span class="s">40</span>
+        <span class="na">delete_on_termination</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">ebs_optimized</span><span class="pi">:</span> <span class="s">no</span>
+    <span class="na">instance_profile_name</span><span class="pi">:</span> <span class="s">AWX-Server-Instance-Profile</span>
+    <span class="na">ansible_group</span><span class="pi">:</span> <span class="s">awx-servers</span>
+    <span class="na">ansible_ssh_user</span><span class="pi">:</span> <span class="s">ubuntu</span>
+    <span class="na">ansible_ssh_private_key_file</span><span class="pi">:</span> <span class="s">.private_keys/production.pem</span>
+    <span class="na">ansible_become</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">host_type</span><span class="pi">:</span> <span class="s">ec2</span>
+    <span class="na">enable_alarms</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">role_vars</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">awx_db_host</span><span class="pi">:</span> <span class="s">awxdb01</span>
+</code></pre></div></div>
+
+<p>Now, with that, it’s time to add some plays to build ec2 resources. To
+do this, I wrote a simple playbook called <code class="highlighter-rouge">provision_resources.yml</code> that
+uses the <a href="http://docs.ansible.com/ansible/latest/ec2_module.html">Ansible EC2 module</a> to build EC2 resources.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="pi">-</span> <span class="na">hosts</span><span class="pi">:</span> <span class="s">127.0.0.1</span>
+  <span class="na">connection</span><span class="pi">:</span> <span class="s">local</span>
+  <span class="na">vars</span><span class="pi">:</span>
+    <span class="na">hashi_vault_token</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">lookup('file','.hashi_vault_token')</span><span class="nv"> </span><span class="s">}}"</span>
+    <span class="na">hashi_vault_addr</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">lookup('env','VAULT_ADDR')}}"</span>
+
+  <span class="na">tasks</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">include_vars</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">inventory</span><span class="nv"> </span><span class="s">}}"</span>
+
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Provision EC2 hosts</span>
+    <span class="na">ec2</span><span class="pi">:</span>
+      <span class="na">region</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.region</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">private_ip</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.private_ip</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">instance_type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.instance_type</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">keypair</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.keypair</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">groups</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.groups</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">image</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.image</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">assign_public_ip</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.assign_public_ip</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">instance_tags</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.instance_tags</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">to_json</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">tenancy</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.tenancy</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">monitoring</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.monitoring</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">termination_protection</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.termination_protection</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">vpc_subnet_id</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.vpc_subnet_id</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">wait</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.wait</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">volumes</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.volumes</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">ebs_optimized</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.ebs_optimized</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">instance_profile_name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.instance_profile_name</span><span class="nv"> </span><span class="s">}}"</span>
+    <span class="na">with_items</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">ec2_hosts</span><span class="nv"> </span><span class="s">}}"</span>
+    <span class="na">aws_access_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">lookup('hashi_vault',</span><span class="nv"> </span><span class="s">'secret=aws/creds/production_provision_resources:access_key')</span><span class="nv"> </span><span class="s">}}"</span>
+    <span class="na">aws_secret_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">lookup('hashi_vault',</span><span class="nv"> </span><span class="s">'secret=aws/creds/production_provision_resources:secret_key')</span><span class="nv"> </span><span class="s">}}"</span>
+</code></pre></div></div>
+
+<p>Now, to provision the new resource, I simply have to run the command:
+<code class="highlighter-rouge">ansible-playbook provision_resources.yml --extra-vars
+"inventory=aws_config/ec2/awx01.yml"</code></p>
+
+<p>All that’s left to do now, is to run my playbook that installs and
+provisions Docker and the containers that need to run for my AWX server.
+(Unfortunately AWS Fargate isn’t available in the us-west-2 region at the
+time of the writing of this post or I would be using another server as
+an example for this post, but again, more on that later. . . )</p>
+
+<p>However, here’s where I hit one of my first snags. By default, the
+Python version used on Ubuntu does not allow for Ansible’s ssh client to
+run its tasks. Luckily, Ansible’s <a href="http://docs.ansible.com/ansible/latest/raw_module.html">raw module</a> allows us to execute an extremely basic ssh command similar to <code class="highlighter-rouge">ssh -c</code>. Also, before I can run any Ansible plays against this new host, I’ll need to make sure that it’s actually a member of my hosts inventory. So, I’ll also need to make sure my new host exists in my local inventory. Also, if I’m building/rebuilding or changing hosts, I’ll need to make sure that there are no issues with my <code class="highlighter-rouge">.ssh/known_hosts</code>. So, I built another task book that I could import to manipulate my local files.</p>
+
+<p><code class="highlighter-rouge">aws_mgmt/update_local_files.yml</code></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Add group to ansible inventory</span>
+  <span class="na">lineinfile</span><span class="pi">:</span>
+    <span class="na">dest</span><span class="pi">:</span> <span class="s">.ansible_hosts</span>
+    <span class="na">regexp</span><span class="pi">:</span> <span class="s1">'</span><span class="s">^\[{{</span><span class="nv"> </span><span class="s">resource_group</span><span class="nv"> </span><span class="s">}}\]'</span>
+    <span class="na">line</span><span class="pi">:</span> <span class="s2">"</span><span class="s">[{{</span><span class="nv"> </span><span class="s">resource_group</span><span class="nv"> </span><span class="s">}}]</span><span class="se">\n</span><span class="s">"</span>
+    <span class="na">insertbefore</span><span class="pi">:</span> <span class="s1">'</span><span class="s">#</span><span class="nv"> </span><span class="s">Group</span><span class="nv"> </span><span class="s">Configurations'</span>
+
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Add group vars headerto ansible inventory</span>
+  <span class="na">lineinfile</span><span class="pi">:</span>
+    <span class="na">dest</span><span class="pi">:</span> <span class="s">.ansible_hosts</span>
+    <span class="na">regexp</span><span class="pi">:</span> <span class="s1">'</span><span class="s">^\[{{</span><span class="nv"> </span><span class="s">resource_group</span><span class="nv"> </span><span class="s">}}:vars'</span>
+    <span class="na">line</span><span class="pi">:</span> <span class="s2">"</span><span class="s">[{{</span><span class="nv"> </span><span class="s">resource_group</span><span class="nv"> </span><span class="s">}}:vars]</span><span class="se">\n</span><span class="s">"</span>
+    <span class="na">insertafter</span><span class="pi">:</span> <span class="s">EOF</span>
+
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Add group vars to ansible inventory</span>
+  <span class="na">lineinfile</span><span class="pi">:</span>
+    <span class="na">dest</span><span class="pi">:</span> <span class="s">.ansible_hosts</span>
+    <span class="na">regexp</span><span class="pi">:</span> <span class="s1">'</span><span class="s">^{{</span><span class="nv"> </span><span class="s">item</span><span class="nv"> </span><span class="s">}}'</span>
+    <span class="na">line</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">item</span><span class="nv"> </span><span class="s">}}'</span>
+    <span class="na">insertafter</span><span class="pi">:</span> <span class="s1">'</span><span class="s">[{{</span><span class="nv"> </span><span class="s">resource_group</span><span class="nv"> </span><span class="s">}}:vars]'</span>
+  <span class="na">with_items</span><span class="pi">:</span> <span class="s">resource_group_vars</span>
+  <span class="na">when</span><span class="pi">:</span> <span class="s">resource_group_vars exists</span>
+
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Add host(s) and key information to ansible inventory under correct group</span>
+  <span class="na">lineinfile</span><span class="pi">:</span>
+    <span class="na">dest</span><span class="pi">:</span> <span class="s">.ansible_hosts</span>
+    <span class="na">regexp</span><span class="pi">:</span> <span class="s2">"</span><span class="s">^{{</span><span class="nv"> </span><span class="s">resource_ip</span><span class="nv"> </span><span class="s">}}"</span>
+    <span class="na">insertafter</span><span class="pi">:</span> <span class="s1">'</span><span class="s">^\[{{</span><span class="nv"> </span><span class="s">resource_group</span><span class="nv"> </span><span class="s">}}\]'</span>
+    <span class="na">line</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">resource_ip</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">ansible_host={{</span><span class="nv"> </span><span class="s">resource_name</span><span class="nv"> </span><span class="s">}}</span><span class="nv">  </span><span class="s">ansible_ssh_private_key_file={{</span><span class="nv"> </span><span class="s">resource_key_file</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">resource_extra_vars</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">default([])</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">join('</span><span class="nv"> </span><span class="s">')</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">host_type=</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">host_type</span><span class="nv"> </span><span class="s">}}"</span>
+
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Add entry to /etc/hosts</span>
+  <span class="na">lineinfile</span><span class="pi">:</span>
+    <span class="na">dest</span><span class="pi">:</span> <span class="s">/etc/hosts</span>
+    <span class="na">regexp</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">resource_name</span><span class="nv"> </span><span class="s">}}"</span>
+    <span class="na">line</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">resource_ip</span><span class="nv"> </span><span class="s">}}</span><span class="nv">     </span><span class="s">{{</span><span class="nv"> </span><span class="s">resource_name</span><span class="nv"> </span><span class="s">}}"</span>
+  <span class="na">become</span><span class="pi">:</span> <span class="no">true</span>
+
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Verify that no entries exist in ~/.ssh/known_hosts</span>
+  <span class="na">lineinfile</span><span class="pi">:</span>
+    <span class="na">dest</span><span class="pi">:</span> <span class="s">~/.ssh/known_hosts</span>
+    <span class="na">regexp</span><span class="pi">:</span> <span class="s2">"</span><span class="s">^{{</span><span class="nv"> </span><span class="s">resource_name</span><span class="nv"> </span><span class="s">}}"</span>
+    <span class="na">line</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
+
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Verify that no entries exist in ~/.ssh/known_hosts</span>
+  <span class="na">lineinfile</span><span class="pi">:</span>
+    <span class="na">dest</span><span class="pi">:</span> <span class="s">~/.ssh/known_hosts</span>
+    <span class="na">regexp</span><span class="pi">:</span> <span class="s2">"</span><span class="s">^{{</span><span class="nv"> </span><span class="s">resource_ip</span><span class="nv"> </span><span class="s">}}"</span>
+    <span class="na">line</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
+
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Reload inventory to pull in changes.</span>
+  <span class="na">meta</span><span class="pi">:</span> <span class="s">refresh_inventory</span>
+</code></pre></div></div>
+
+<p>Then, I just need to update the <code class="highlighter-rouge">post_tasks</code> in the <code class="highlighter-rouge">provision_resources.yml</code> playbook to modify my local files and finally update Python.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">post_tasks</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Update local inventory files</span>
+      <span class="na">include</span><span class="pi">:</span> <span class="s">aws_mgmt/update_local_files.yml</span>
+        <span class="s">resource_group={{ item.ansible_group }}</span>
+        <span class="s">inventory_file={{ inventory_file | default('.ansible_hosts') }}</span>
+        <span class="s">resource_ip={{ item.private_ip }}</span>
+        <span class="s">resource_name={{ item.name }}</span>
+        <span class="s">resource_ssh_user={{ item.ansible_ssh_user }}</span>
+        <span class="s">resource_key_file={{ item.ansible_ssh_private_key_file }}</span>
+        <span class="s">resource_become={{ item.ansible_become }}</span>
+        <span class="s">resource_extra_vars={{ item.role_vars | default([]) }}</span>
+        <span class="s">resource_group_vars={{ item.group_vars | when item.group_vars exists }}</span>
+      <span class="na">with_items</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">ec2_hosts</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">when</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">ec2_hosts is defined</span>
+        <span class="pi">-</span> <span class="s">item.host_type == 'ec2'</span>
+
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Wait for host to come up and respond to port 22.</span>
+      <span class="na">wait_for</span><span class="pi">:</span>
+        <span class="na">host</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.private_ip</span><span class="nv"> </span><span class="s">}}"</span>
+        <span class="na">port</span><span class="pi">:</span> <span class="s">22</span>
+        <span class="na">search_regex</span><span class="pi">:</span> <span class="s">OpenSSH</span>
+        <span class="na">delay</span><span class="pi">:</span> <span class="s">60</span>
+        <span class="na">timeout</span><span class="pi">:</span> <span class="s">300</span>
+        <span class="na">state</span><span class="pi">:</span> <span class="s">started</span>
+      <span class="na">with_items</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">ec2_hosts</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">when</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">ec2_hosts is defined</span>
+        <span class="pi">-</span> <span class="s">item.host_type == 'ec2'</span>
+        <span class="pi">-</span> <span class="s">not ec2_repair_mode | default(false)</span>
+
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Repair apt if in ec2_repair_mode</span>
+      <span class="na">delegate_to</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.private_ip</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">raw</span><span class="pi">:</span> <span class="s">sudo apt -y update --fix-missing</span>
+      <span class="na">with_items</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">ec2_hosts</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">when</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">ec2_hosts is defined</span>
+        <span class="pi">-</span> <span class="s">item.host_type == 'ec2'</span>
+        <span class="pi">-</span> <span class="s">ec2_repair_mode | default(false)</span>
+
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run post-provisioning tasks</span>
+      <span class="na">delegate_to</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">item.private_ip</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">include</span><span class="pi">:</span> <span class="s">aws_mgmt/post_provision_setup.yml</span>
+        <span class="s">resource_ip={{ item.private_ip }}</span>
+        <span class="s">resource_name={{ item.name }}</span>
+      <span class="na">with_items</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">ec2_hosts</span><span class="nv"> </span><span class="s">}}"</span>
+      <span class="na">when</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">ec2_hosts is defined</span>
+        <span class="pi">-</span> <span class="s">item.host_type == 'ec2'</span>
+</code></pre></div></div>
+
+<p>You’ll also note two extra plays in this inventory. One is a task that
+simply waits for port 22 to be available on the newly generated host.
+This allows EC2 a chance to actually provision the instance.
+Unfortunately, the times for this action vary. So, I added another
+variable that can be defined at the run time of the playbook via
+<code class="highlighter-rouge">--extra-vars</code> that will
+skip the task of actually provisioning the resource and just tackle the
+remote tasks.</p>
+
+<p>The second extra play in the inventory has to do with an issue that I
+periodically come across with Ubuntu AMI’s where the apt cache is in an
+unpredictable state. I used the same <code class="highlighter-rouge">ec2_repair_mode</code> variable here to
+skip the actual provisioning of the host.</p>
+
+<p>That is the basic format for building my EC2 hosts. I’ll cover
+provisioning RDS hosts in part 2, CloudWatch configuration in Part 3,
+and resource termination in part 4.</p>
+
+
+          </div>
+          <div class="article-share">
+            
+            
+            <a href="https://twitter.com/home?status=Using+Ansible+to+Provision+AWS+Resources+-+Part+1%20-%20http://ben.tennant.family/posts/aws-provisioning-with-ansible-p1" title="Share on Twitter" rel="noreferrer noopener" target="_blank">
+              <svg viewBox="0 0 512 512"><path d="M492 109.5c-17.4 7.7-36 12.9-55.6 15.3 20-12 35.4-31 42.6-53.6 -18.7 11.1-39.4 19.2-61.5 23.5C399.8 75.8 374.6 64 346.8 64c-53.5 0-96.8 43.4-96.8 96.9 0 7.6 0.8 15 2.5 22.1 -80.5-4-151.9-42.6-199.6-101.3 -8.3 14.3-13.1 31-13.1 48.7 0 33.6 17.2 63.3 43.2 80.7C67 210.7 52 206.3 39 199c0 0.4 0 0.8 0 1.2 0 47 33.4 86.1 77.7 95 -8.1 2.2-16.7 3.4-25.5 3.4 -6.2 0-12.3-0.6-18.2-1.8 12.3 38.5 48.1 66.5 90.5 67.3 -33.1 26-74.9 41.5-120.3 41.5 -7.8 0-15.5-0.5-23.1-1.4C62.8 432 113.7 448 168.3 448 346.6 448 444 300.3 444 172.2c0-4.2-0.1-8.4-0.3-12.5C462.6 146 479 129 492 109.5z"/></svg>
+            </a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u=http://ben.tennant.family/posts/aws-provisioning-with-ansible-p1" title="Share on Facebook" rel="noreferrer noopener" target="_blank">
+              <svg viewBox="0 0 512 512"><path d="M288 192v-38.1c0-17.2 3.8-25.9 30.5-25.9H352V64h-55.9c-68.5 0-91.1 31.4-91.1 85.3V192h-45v64h45v192h83V256h56.4l7.6-64H288z"/></svg>
+            </a>
+            <a href="https://plus.google.com/share?url=http://ben.tennant.family/posts/aws-provisioning-with-ansible-p1" title="Share on Google+" rel="noreferrer noopener" target="_blank">
+              <svg viewBox="0 0 128 128"><path d="M40.7 55.9v16.1c0 0 15.6 0 22 0C59.2 82.5 53.8 88.2 40.7 88.2c-13.3 0-23.7-10.8-23.7-24.2s10.4-24.2 23.7-24.2c7.1 0 11.6 2.5 15.8 5.9 3.3-3.3 3.1-3.8 11.6-11.9 -7.2-6.6-16.8-10.6-27.4-10.6C18.2 23.3 0 41.5 0 64c0 22.5 18.2 40.7 40.7 40.7 33.6 0 41.8-29.3 39-48.8H40.7zM113.9 56.7V42.6h-10.1v14.1H89.4v10.1h14.5v14.5h10.1V66.8H128V56.7H113.9z"/></svg>
+            </a>
+          </div>
+
+          
+        </article>
+        <footer class="footer scrollappear">
+  <p>
+  This website was built using <a href="chalk.nielsenramon.com">Chalk</a>, a theme for Jekyll built by <a href="https://nielsenramon.com">Nielsen Ramon</a>
+  <p>
+  This blog was written by <a href="/about" title="About me">Ben Tennant</a>
+</footer>
+
+      </div>
+    </div>
+  </main>
+  
+
+<script type="text/javascript" src="/assets/vendor-2e5becc015a837c852edabccbc32f5a390d4afa7a2ca601db948ea5b9e50292a.js"></script>
+
+
+  <script type="text/javascript" src="/assets/webfonts-e3010885de8c083c4b2935d463b1649e8796191a66a1b43bb87ef04bbcce420d.js"></script>
+
+
+
+  <script type="text/javascript" src="/assets/scrollappear-e2da8ea567e418637e31266cc5302126eaa79f62a2273739086358b589a89ee6.js"></script>
+
+
+<script type="text/javascript" src="/assets/application-cd43a7f9bd8a08997bb19229cd040e7129ede0a1adf77c693b5835c9f8c2a4b1.js"></script>
+
+</body>
+</html>
