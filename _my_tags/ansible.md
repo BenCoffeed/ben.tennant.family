@@ -1,0 +1,4 @@
+---
+slug: ansible
+name: Ansible
+---
