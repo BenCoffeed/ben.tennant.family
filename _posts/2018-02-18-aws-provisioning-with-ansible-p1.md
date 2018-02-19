@@ -5,9 +5,8 @@ description: "Building EC2 instances with Ansible"
 thumb_image: "posts/aws-provisioning-with-ansible/Ansible_Amazon_B_W.png"
 tags: [DevOps, Ansible, AWS]
 ---
-NOTE: You can view the repo for this work over at
-https://github.com/bencoffeed/AnsibleAWS
-# Using Ansible to Provision AWS Resources - Part 1
+NOTE: You can view the repo for this project on
+[GitHub](https://github.com/BenCoffeed/AnsibleAWS)
 
 When I took on my first DevOps job, I noticed that while the team had existing CM (Puppet), the process of actually provisioning new resources was extremely manual. I had to dig to find out what AMI's, instance types, security groups, tags, tenancy, VPC structure, subnets, storage configuration, etc. were being used for existing instances. Once I figured all of these things out, I had to figure out what version of puppet was being used. I spent a solid month of just reviewing existing configs and trying to dig through what documentation was available to try and get an idea of how things were operating. I spent all of that time digging through only to realize that the CM we were using had been broken quite a while ago due to the use of a retired custom PHP PPA. Digging through the puppet config, it became quickly evident that the code hadn't been touched in over 3 years. I decided that it would probably be best to simply rewrite the CM and since both the lead backend developer and myself were most familiar with Ansible, we chose to rewrite it using Ansible. I'll post more on that later. . . However, since I was going to be upgrading all of our servers to a current version of Ubuntu as well, I decided to do a blue/green approach and just rebuild everything from scratch. To do this, though, I needed a reliable, repeatable way to build/tear down, and rebuild instances. A wiser man may have used something like HashiCorp's Terraform. However, I didn't see the point of bringing in ANOTHER new technology when I had all the tools to build my infrastructure using Ansible.
 
