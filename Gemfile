@@ -1,5 +1,6 @@
 source "https://rubygems.org"
 
+gem "bundler"
 gem "autoprefixer-rails"
 gem "html-proofer"
 gem "image_optim"
